@@ -4,6 +4,7 @@ import Persons from "./components/Persons";
 import PersonForm from "./components/PersonForm";
 import Filter from "./components/Filter";
 
+const baseUrl = "http://localhost:3001/persons";
 
 const App = () => {
 	const [persons, setPersons] = useState([]);
@@ -12,11 +13,10 @@ const App = () => {
 	const [filter, setFilter] = useState("");
 
 	useEffect(() => {
-		axios.get("http://localhost:3001/persons").then(response => {
-			console.log(response.data)
-			setPersons(response.data)
-		})
-	}, [])
+		axios.get(baseUrl).then((response) => {
+			setPersons(response.data);
+		});
+	}, []);
 
 	const addPerson = (event) => {
 		event.preventDefault();
@@ -30,9 +30,12 @@ const App = () => {
 			name: newName,
 			number: newNumber,
 		};
-		setPersons([...persons, newPerson]);
-		setNewName("");
-		setNewNumber("");
+
+		axios.post(baseUrl, newPerson).then((response) => {
+			setPersons([...persons, response.data]);
+			setNewName("");
+			setNewNumber("");
+		});
 	};
 
 	const personsToShow =
