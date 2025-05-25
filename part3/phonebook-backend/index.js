@@ -24,6 +24,8 @@ const persons = [
 	},
 ];
 
+app.use(express.json());
+
 app.get("/info", (req, res) => {
 	const body = `<div><p>Phonebook has info for ${persons.length} people</p><p>${new Date().toString()}</p></div>`;
 	res.send(body);
@@ -32,6 +34,17 @@ app.get("/info", (req, res) => {
 app.get("/api/persons", (req, res) => {
 	res.json(persons);
 });
+
+app.get("/api/persons/:id", (req, res) => {
+    const id = req.params.id;
+    const person = persons.find(p => p.id === id);
+
+    if (person) {
+        res.json(person);
+    } else {
+        res.status(404).end();
+    }
+})
 
 const PORT = 3001;
 app.listen(PORT, () => {
