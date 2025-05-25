@@ -25,9 +25,12 @@ const App = () => {
 			return;
 		}
 
+		if (newName === '' || newNumber === '') return
+
 		const newPerson = {
 			name: newName,
 			number: newNumber,
+			id: String(persons.length + 1)
 		};
 
 		personsService.create(newPerson).then((returnedPerson) => {
@@ -36,6 +39,17 @@ const App = () => {
 			setNewNumber("");
 		});
 	};
+
+	const deletePerson = id => {
+		const personToBeDeleted = persons.find(p => p.id === id)
+		const remove = confirm(`Delete ${personToBeDeleted.name}?`)
+
+		if (remove) {
+			personsService
+				.remove(id)
+				.then(res => setPersons(persons.filter(p => p.id !== res.id)))
+		}
+	}
 
 	const personsToShow =
 		filter === ""
@@ -61,7 +75,7 @@ const App = () => {
 				onNumberChange={handleNumberChange}
 			/>
 			<h3>Numbers</h3>
-			<Persons persons={personsToShow} />
+			<Persons persons={personsToShow} deletePersonOf={deletePerson} />
 		</div>
 	);
 };

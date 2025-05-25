@@ -1,11 +1,6 @@
 {
   "persons": [
     {
-      "name": "Arto Hellas",
-      "number": "040-123456",
-      "id": "1"
-    },
-    {
       "name": "Ada Lovelace",
       "number": "39-44-5323523",
       "id": "2"
@@ -21,14 +16,9 @@
       "id": "4"
     },
     {
-      "id": "9fe1",
+      "id": "5",
       "name": "Alphonzo Escolar",
       "number": "0926-234-5508"
-    },
-    {
-      "id": "a4b5",
-      "name": "Chloe San Jose",
-      "number": "0919-427-1121"
     }
   ]
 }
