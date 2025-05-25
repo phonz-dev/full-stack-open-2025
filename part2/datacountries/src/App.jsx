@@ -4,11 +4,13 @@ import Countries from "./components/Countries";
 
 function App() {
 	const [searchVal, setSearchVal] = useState("");
-	const [countries, setCountries] = useState([]);
+  const [countries, setCountries] = useState([]);
+
+  const api_key = import.meta.env.VITE_SOME_KEY;
 
 	useEffect(() => {
 		dataCountriesService.getAll().then((res) => setCountries(res));
-  }, [searchVal]);
+  }, []);
 
   const filteredCountries = () =>
 		countries.filter(({ name }) =>
@@ -25,7 +27,7 @@ function App() {
 				<span className="input-label">find countries</span>
 				<input type="text" value={searchVal} onChange={handleSearchChange} />
 			</div>
-			<Countries countries={filteredCountries()} onShowCountryClick={handleShowCountryClick} />
+			{searchVal === '' ? null : <Countries countries={filteredCountries()} onShowCountryClick={handleShowCountryClick} />}
 		</>
 	);
 }
