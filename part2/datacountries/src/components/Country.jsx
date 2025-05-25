@@ -1,11 +1,25 @@
+import { useEffect, useState } from "react";
+import weatherService from "../services/weather";
+
+const kelvinToCelsius = (k) => k - 273.15;
+
 const Country = ({ country }) => {
+	const [weatherData, setWeatherData] = useState(null);
+
 	const {
 		name: { common },
 		languages,
 		flags: { png },
 		capital,
 		area,
+		latlng,
 	} = country;
+
+	useEffect(() => {
+		weatherService.getCountryData(latlng[0], latlng[1]).then((res) => {
+			setWeatherData(res);
+		});
+	}, [latlng]);
 
 	return (
 		<>
@@ -19,8 +33,22 @@ const Country = ({ country }) => {
 				))}
 			</ul>
 			<img src={png} />
+
+			{weatherData === null ? null : (
+				<>
+					<h3>Weather in {weatherData.name}</h3>
+					<div>
+						Temperature: {kelvinToCelsius(weatherData.main.temp).toFixed(2)}{" "}
+						Celsius
+					</div>
+					<img
+						src={`https://openweathermap.org/img/wn/${weatherData.weather[0].icon}@2x.png`}
+					/>
+					<div>Wind: {weatherData.wind.speed} m/s</div>
+				</>
+			)}
 		</>
 	);
 };
 
-export default Country
+export default Country;

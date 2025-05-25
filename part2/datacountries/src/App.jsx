@@ -6,8 +6,6 @@ function App() {
 	const [searchVal, setSearchVal] = useState("");
   const [countries, setCountries] = useState([]);
 
-  const api_key = import.meta.env.VITE_SOME_KEY;
-
 	useEffect(() => {
 		dataCountriesService.getAll().then((res) => setCountries(res));
   }, []);
