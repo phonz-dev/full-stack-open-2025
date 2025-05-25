@@ -8,14 +8,16 @@ function App() {
 
 	useEffect(() => {
 		dataCountriesService.getAll().then((res) => setCountries(res));
-	}, [searchVal]);
+  }, [searchVal]);
 
-	const handleSearchChange = (e) => setSearchVal(e.target.value);
-
-	const filteredCountries = () =>
+  const filteredCountries = () =>
 		countries.filter(({ name }) =>
 			name.common.toLowerCase().includes(searchVal.toLowerCase())
 		);
+
+	const handleSearchChange = (e) => setSearchVal(e.target.value);
+
+  const handleShowCountryClick = country => setSearchVal(country);
 
 	return (
 		<>
@@ -23,7 +25,7 @@ function App() {
 				<span className="input-label">find countries</span>
 				<input type="text" value={searchVal} onChange={handleSearchChange} />
 			</div>
-			<Countries countries={filteredCountries()} />
+			<Countries countries={filteredCountries()} onShowCountryClick={handleShowCountryClick} />
 		</>
 	);
 }
