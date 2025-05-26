@@ -86,7 +86,8 @@ const App = () => {
 		if (remove) {
 			personsService
 				.remove(id)
-				.then((res) => setPersons(persons.filter((p) => p.id !== res.id)));
+				.then(_ => setPersons(persons.filter((p) => p.id !== id)))
+
 		}
 	};
 
