@@ -1,16 +1,18 @@
-require('dotenv').config();
+require("dotenv").config();
 const express = require("express");
-const morgan = require('morgan');
-const cors = require('cors');
-const Person = require('./models/person');
+const morgan = require("morgan");
+const cors = require("cors");
+const Person = require("./models/person");
 
 const app = express();
-morgan.token('body', req => JSON.stringify(req.body));
+morgan.token("body", (req) => JSON.stringify(req.body));
 
 app.use(express.json());
-app.use(cors())
+app.use(cors());
 app.use(express.static("dist"));
-app.use(morgan(':method :url :status :res[content-length] - :response-time ms :body'));
+app.use(
+	morgan(":method :url :status :res[content-length] - :response-time ms :body")
+);
 
 let persons = [
 	{
@@ -35,77 +37,78 @@ let persons = [
 	},
 ];
 
-const generateId = () => String(Math.floor(Math.random() * 1_000_000_000)); // range: 0 to 999,999,999
-
-app.get("/info", (req, res) => {
-	const body = `<div><p>Phonebook has info for ${persons.length} people</p><p>${new Date().toString()}</p></div>`;
-	res.send(body);
+app.get("/info", (req, res, next) => {
+	Person.find({}).then((persons) => {
+		const body = `<div><p>Phonebook has info for ${persons.length} people</p><p>${new Date().toString()}</p></div>`;
+		res.send(body);
+	}).catch(error => next(error));
 });
 
 app.get("/api/persons", (req, res) => {
-    Person.find({}).then(people => res.json(people));
+	Person.find({}).then((people) => res.json(people));
 });
 
-app.get("/api/persons/:id", (req, res) => {
-    const id = req.params.id;
-    const person = persons.find(p => p.id === id);
+app.get("/api/persons/:id", (req, res, next) => {
+	Person.findById(req.params.id)
+		.then((person) => {
+			if (!person) {
+				return res.status(404).end();
+			}
 
-    if (person) {
-        res.json(person);
-    } else {
-        res.status(404).end();
-    }
-})
+			res.json(person);
+		})
+		.catch((error) => next(error));
+});
 
 app.delete("/api/persons/:id", (req, res, next) => {
-    Person.findByIdAndDelete(req.params.id)
-        .then(result => res.status(204).end())
-        .catch(error => next(error))
-})
+	Person.findByIdAndDelete(req.params.id)
+		.then((result) => res.status(204).end())
+		.catch((error) => next(error));
+});
 
 app.post("/api/persons", (req, res) => {
-    const { name, number } = req.body;
+	const { name, number } = req.body;
 
-    if (!name || !number) {
-        return res.status(400).json({
-            error: "name and number fields are required"
-        });
-    }
+	if (!name || !number) {
+		return res.status(400).json({
+			error: "name and number fields are required",
+		});
+	}
 
-    const person = new Person({
-        name: name,
-        number: number,
-    });
+	const person = new Person({
+		name: name,
+		number: number,
+	});
 
-    person.save().then(savedPerson => res.json(savedPerson));
-})
+	person.save().then((savedPerson) => res.json(savedPerson));
+});
 
 app.put("/api/persons/:id", (req, res, next) => {
-    const { name, number } = req.body;
+	const { name, number } = req.body;
 
-    Person.findById(req.params.id)
-        .then(person => {
-            if (!person) {
-                return res.status(404).end();
-            }
+	Person.findById(req.params.id)
+		.then((person) => {
+			if (!person) {
+				return res.status(404).end();
+			}
 
-            person.name = name;
-            person.number = number;
+			person.name = name;
+			person.number = number;
 
-            return person.save().then(updatedPerson => res.json(updatedPerson));
-        })
-        .catch(error => next(error));
-})
+			return person.save().then((updatedPerson) => res.json(updatedPerson));
+		})
+		.catch((error) => next(error));
+});
 
 const errorHandler = (error, req, res, next) => {
-    console.log(error);
+	console.log(error);
 
-    if (error.message === 'CastError') {
-        return res.status(400).send({ error: 'malformatted id' });
-    }
+	if (error.message === "CastError") {
+		return res.status(400).send({ error: "malformatted id" });
+	}
 
-    next(error)
-}
+	next(error);
+};
 
 app.use(errorHandler);
 
