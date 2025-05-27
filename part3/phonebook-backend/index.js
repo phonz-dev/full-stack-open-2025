@@ -64,20 +64,37 @@ app.delete("/api/persons/:id", (req, res, next) => {
 })
 
 app.post("/api/persons", (req, res) => {
-    const body = req.body;
+    const { name, number } = req.body;
 
-    if (!body.name || !body.number) {
+    if (!name || !number) {
         return res.status(400).json({
             error: "name and number fields are required"
         });
     }
 
     const person = new Person({
-        name: body.name,
-        number: body.number,
+        name: name,
+        number: number,
     });
 
     person.save().then(savedPerson => res.json(savedPerson));
+})
+
+app.put("/api/persons/:id", (req, res, next) => {
+    const { name, number } = req.body;
+
+    Person.findById(req.params.id)
+        .then(person => {
+            if (!person) {
+                return res.status(404).end();
+            }
+
+            person.name = name;
+            person.number = number;
+
+            return person.save().then(updatedPerson => res.json(updatedPerson));
+        })
+        .catch(error => next(error));
 })
 
 const errorHandler = (error, req, res, next) => {
