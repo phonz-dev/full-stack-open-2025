@@ -5,11 +5,11 @@ const cors = require("cors");
 const Person = require("./models/person");
 
 const app = express();
-morgan.token("body", (req) => JSON.stringify(req.body));
 
-app.use(express.json());
-app.use(cors());
 app.use(express.static("dist"));
+app.use(express.json());
+// app.use(cors());
+morgan.token("body", (req) => JSON.stringify(req.body));
 app.use(
 	morgan(":method :url :status :res[content-length] - :response-time ms :body")
 );
@@ -66,7 +66,7 @@ app.delete("/api/persons/:id", (req, res, next) => {
 		.catch((error) => next(error));
 });
 
-app.post("/api/persons", (req, res) => {
+app.post("/api/persons", (req, res, next) => {
 	const { name, number } = req.body;
 
 	if (!name || !number) {
@@ -80,7 +80,9 @@ app.post("/api/persons", (req, res) => {
 		number: number,
 	});
 
-	person.save().then((savedPerson) => res.json(savedPerson));
+    person.save()
+        .then((savedPerson) => res.json(savedPerson))
+        .catch(error => next(error));
 });
 
 app.put("/api/persons/:id", (req, res, next) => {
@@ -101,11 +103,13 @@ app.put("/api/persons/:id", (req, res, next) => {
 });
 
 const errorHandler = (error, req, res, next) => {
-	console.log(error);
+	console.log(error.message);
 
-	if (error.message === "CastError") {
+	if (error.name === "CastError") {
 		return res.status(400).send({ error: "malformatted id" });
-	}
+    } else if (error.name === "ValidationError") {
+        return res.status(400).send({ error: error.message });
+    }
 
 	next(error);
 };

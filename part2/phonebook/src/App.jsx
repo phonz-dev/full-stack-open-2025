@@ -11,7 +11,7 @@ const App = () => {
 	const [newNumber, setNewNumber] = useState("");
 	const [filter, setFilter] = useState("");
 	const [noficationMsg, setNotificationMsg] = useState(null);
-	const [error, setError] = useState(false)
+	const [error, setError] = useState(false);
 
 	useEffect(() => {
 		personsService.getAll().then((initialPersons) => {
@@ -47,15 +47,15 @@ const App = () => {
 							setNotificationMsg(null);
 						}, 5000);
 					})
-					.catch(_ => {
-						setError(true)
+					.catch((_) => {
+						setError(true);
 						setNotificationMsg(
 							`Information of ${personToBeUpdated.name} has already been removed from server`
 						);
-						setPersons(persons.filter(p => p.id !== personToBeUpdated.id))
+						setPersons(persons.filter((p) => p.id !== personToBeUpdated.id));
 						setTimeout(() => {
 							setNotificationMsg(null);
-							setError(false)
+							setError(false);
 						}, 5000);
 					});
 				return;
@@ -65,18 +65,30 @@ const App = () => {
 		const newPerson = {
 			name: newName,
 			number: newNumber,
-			id: String(persons.length + 1),
 		};
 
-		personsService.create(newPerson).then((returnedPerson) => {
-			setPersons([...persons, returnedPerson]);
-			setNewName("");
-			setNewNumber("");
-			setNotificationMsg(`Added ${returnedPerson.name}`);
-			setTimeout(() => {
-				setNotificationMsg(null);
-			}, 5000);
-		});
+		personsService
+			.create(newPerson)
+			.then((returnedPerson) => {
+				setPersons([...persons, returnedPerson]);
+				setNewName("");
+				setNewNumber("");
+				setNotificationMsg(`Added ${returnedPerson.name}`);
+				setTimeout(() => {
+					setNotificationMsg(null);
+				}, 5000);
+			})
+			.catch((error) => {
+				console.log(error);
+				setError(true);
+				setNotificationMsg(error.response.data.error);
+				setNewName("");
+				setNewNumber("");
+				setTimeout(() => {
+					setError(false);
+					setNotificationMsg(null);
+				}, 5000);
+			});
 	};
 
 	const deletePerson = (id) => {
@@ -86,8 +98,7 @@ const App = () => {
 		if (remove) {
 			personsService
 				.remove(id)
-				.then(_ => setPersons(persons.filter((p) => p.id !== id)))
-
+				.then((_) => setPersons(persons.filter((p) => p.id !== id)));
 		}
 	};
 
