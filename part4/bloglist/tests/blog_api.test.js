@@ -52,6 +52,24 @@ test('successfully creates a valid blog', async () => {
   assert(titles.includes('How to learn fullstack development'))
 })
 
+test('if likes property is missing, likes\' value default to zero', async () => {
+  const blog = {
+    title: "How to be a millionaire",
+    author: "Grant Cardone",
+    url: "https://grantcardone.com/",
+  }
+
+  await api
+    .post('/api/blogs')
+    .send(blog)
+    .expect(201)
+    .expect('Content-Type', /application\/json/)
+
+  const response = await api.post('/api/blogs').send(blog)
+
+  assert.strictEqual(response.body.likes, 0)
+})
+
 after(() => {
   mongoose.connection.close()
 })
