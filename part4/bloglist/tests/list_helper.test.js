@@ -98,3 +98,13 @@ describe('favorite blog', () => {
     assert.deepStrictEqual(listHelper.favoriteBlog(blogs), blogs[2])
   })
 })
+
+describe('most blogs', () => {
+  test('returns null if list is empty', () => {
+    assert.strictEqual(listHelper.mostBlogs([]), null)
+  })
+
+  test('returns the author with the most blogs', () => {
+    assert.deepStrictEqual(listHelper.mostBlogs(blogs), { author: 'Robert C. Martin', blogs: 3 })
+  })
+})

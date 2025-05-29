@@ -17,8 +17,34 @@ const favoriteBlog = (blogs) => {
   })
 };
 
+const mostBlogs = (blogs) => {
+  if (blogs.length === 0) return null
+
+  const blogsCount = blogs.reduce((obj, { author }) => {
+    if (author in obj) {
+      obj[author] += 1
+    } else {
+      obj[author] = 1
+    }
+    return obj
+  }, {})
+
+  const authors = []
+  for (const author in blogsCount) {
+    const blogs = blogsCount[author]
+
+    authors.push({ author, blogs })
+  }
+
+  return authors.reduce((author1, author2) => {
+    if (author2 === undefined ||  author1.blogs > author2.blogs) return author1
+    return author2
+  })
+}
+
 module.exports = {
 	dummy,
   totalLikes,
-  favoriteBlog
+  favoriteBlog,
+  mostBlogs
 };
