@@ -95,7 +95,7 @@ test('responds with 400 status code if the title or url properties are missing',
   assert.strictEqual(response.body.length, helper.initialBlogs.length)
 })
 
-test.only('deletes a specific blog', async () => {
+test('deletes a specific blog', async () => {
   const blogsAtStart = await helper.blogsInDb()
   const blogToDelete = blogsAtStart[0]
 
@@ -107,6 +107,26 @@ test.only('deletes a specific blog', async () => {
   assert(!titles.includes(blogToDelete.title))
 
   assert.strictEqual(blogsAtEnd.length, helper.initialBlogs.length - 1)
+})
+
+test.only('updates a specific blog', async () => {
+  const blogsAtStart = await helper.blogsInDb()
+  const blogToUpdate = blogsAtStart[0]
+  const updatedBlog = {
+    ...blogToUpdate,
+    author: 'Chloe San Jose'
+  }
+
+  await api
+    .put(`/api/blogs/${blogToUpdate.id}`)
+    .send(updatedBlog)
+    .expect(200)
+    .expect('Content-Type', /application\/json/)
+
+  const blogsAtEnd = await helper.blogsInDb()
+  const authors = blogsAtEnd.map(({ author }) => author)
+  assert(authors.some((author) => author === updatedBlog.author))
+  assert.strictEqual(blogsAtEnd.length, helper.initialBlogs.length)
 })
 
 
