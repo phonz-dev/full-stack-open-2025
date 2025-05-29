@@ -70,6 +70,31 @@ test('if likes property is missing, likes\' value default to zero', async () => 
   assert.strictEqual(response.body.likes, 0)
 })
 
+test.only('responds with 400 status code if the title or url properties are missing', async () => {
+  let blog = {
+    author: "Grant Cardone",
+    url: "https://grantcardone.com/",
+  }
+
+  await api
+    .post('/api/blogs')
+    .send(blog)
+    .expect(400)
+
+  blog = {
+    title: "How to be a millionaire",
+    author: "Grant Cardone",
+  }
+
+  await api
+    .post('/api/blogs')
+    .send(blog)
+    .expect(400)
+
+  const response = await api.get('/api/blogs')
+  assert.strictEqual(response.body.length, helper.initialBlogs.length)
+})
+
 after(() => {
   mongoose.connection.close()
 })
