@@ -1,9 +1,9 @@
 POST http://localhost:3003/api/blogs
 Content-Type: application/json
-Authorization: Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJuYW1lIjoiQWxwaG9uem8gRXNjb2xhciIsImlkIjoiNjgzOTk3MzcwMzUxNjIzYjlmZWYyZDBmIiwiaWF0IjoxNzQ4NjExNjUyfQ.IU2u5ny2KubzP9Z5FepF3FRr23DkvFsH_ss53_1wcHA
+Authorization: Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJuYW1lIjoiQWxwaG9uem8gRXNjb2xhciIsImlkIjoiNjgzOTk3MzcwMzUxNjIzYjlmZWYyZDBmIiwiaWF0IjoxNzQ4NjEyOTAxfQ.n6xQb7LbIsV92AGwrhD1hTKrJp-mJhO8e9tJTXDSc2U
 
 {
-  "title": "The Example Three",
+  "title": "The Example Four",
   "author": "Alphonzo Escolar",
   "url": "example.com"
 }
