@@ -1,10 +1,12 @@
-const { test, beforeEach, after } = require('node:test')
+const { test, beforeEach, after, describe } = require('node:test')
 const assert = require('node:assert')
 const supertest = require('supertest')
 const mongoose = require('mongoose')
 const helper = require('./test_helper')
 const app = require('../app')
+const bcrypt = require('bcrypt')
 const Blog = require('../models/blog')
+const User = require('../models/user')
 
 const api = supertest(app)
 
@@ -109,7 +111,7 @@ test('deletes a specific blog', async () => {
   assert.strictEqual(blogsAtEnd.length, helper.initialBlogs.length - 1)
 })
 
-test.only('updates a specific blog', async () => {
+test('updates a specific blog', async () => {
   const blogsAtStart = await helper.blogsInDb()
   const blogToUpdate = blogsAtStart[0]
   const updatedBlog = {
@@ -127,6 +129,56 @@ test.only('updates a specific blog', async () => {
   const authors = blogsAtEnd.map(({ author }) => author)
   assert(authors.some((author) => author === updatedBlog.author))
   assert.strictEqual(blogsAtEnd.length, helper.initialBlogs.length)
+})
+
+describe('when there is initially one user in db', () => {
+  beforeEach(async () => {
+    await User.deleteMany({})
+
+    const passwordHash = await bcrypt.hash('sekret', 10)
+    const user = new User({ username: 'root', name: 'super user', passwordHash })
+    await user.save()
+  })
+
+  test('creation fails with proper status code and error message if the username is invalid', async () => {
+    const usersAtStart = await User.find({})
+
+    const userWithInvalidUsername = {
+      username: 'je',
+      name: 'Gerald',
+      password: 'random'
+    }
+
+    const response = await api
+      .post('/api/users')
+      .send(userWithInvalidUsername)
+      .expect(400)
+      .expect('Content-Type', /application\/json/)
+
+    const usersAtEnd = await User.find({})
+    assert(response.body.error.includes(`Path \`username\` (\`${userWithInvalidUsername.username}\`) is shorter than the minimum allowed length`))
+    assert.strictEqual(usersAtStart.length, usersAtEnd.length)
+  })
+
+  test.only('creation fails with proper status code and error message if the name is invalid', async () => {
+    const usersAtStart = await User.find({})
+
+    const userWithInvalidName = {
+      username: 'jejemon',
+      name: 'Ge',
+      password: 'random'
+    }
+
+    const response = await api
+      .post('/api/users')
+      .send(userWithInvalidName)
+      .expect(400)
+      .expect('Content-Type', /application\/json/)
+
+    const usersAtEnd = await User.find({})
+    assert(response.body.error.includes(`Path \`name\` (\`${userWithInvalidName.name}\`) is shorter than the minimum allowed length`))
+    assert.strictEqual(usersAtStart.length, usersAtEnd.length)
+  })
 })
 
 
