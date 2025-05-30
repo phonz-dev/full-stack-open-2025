@@ -1,19 +1,27 @@
-require('express-async-errors')
-const express = require('express')
-const mongoose = require('mongoose')
-const blogsRouter = require('./controllers/blogs')
-const config = require('./utils/config')
-const logger = require('./utils/logger')
+require("express-async-errors");
+const express = require("express");
+const mongoose = require("mongoose");
+const config = require("./utils/config");
+const logger = require("./utils/logger");
+const blogsRouter = require("./controllers/blogs");
+const usersRouter = require("./controllers/users");
 
-const app = express()
+const app = express();
 
-mongoose
-  .connect(config.MONGODB_URI)
-  .then(() => logger.info('connected to MongoDB'))
-  .catch(error => logger.error(`error connecting to MongoDB ${error.message}`))
+const connectToDb = async () => {
+	try {
+		await mongoose.connect(config.MONGODB_URI);
+		logger.info("connected to MongoDB");
+	} catch (error) {
+		logger.error(`error connecting to MongoDB ${error.message}`);
+	}
+};
 
-app.use(express.json())
+connectToDb()
 
-app.use('/api/blogs', blogsRouter)
+app.use(express.json());
 
-module.exports = app
+app.use("/api/blogs", blogsRouter);
+app.use("/api/users", usersRouter);
+
+module.exports = app;
