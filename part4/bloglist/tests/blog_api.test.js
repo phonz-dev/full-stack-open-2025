@@ -13,6 +13,10 @@ const api = supertest(app)
 beforeEach(async () => {
   await Blog.deleteMany({})
   await Blog.insertMany(helper.initialBlogs)
+  await User.deleteMany({})
+  const passwordHash = await bcrypt.hash('chiklet', 10)
+  const user = new User({ username: 'fonzeus', name: 'Alphonzo Escolar', passwordHash })
+  await user.save()
 })
 
 test('all blogs are returned', async () => {
@@ -34,6 +38,30 @@ test('all blogs has an \'id\' parameter', async () => {
 })
 
 test('successfully creates a valid blog', async () => {
+  const loginResponse = await api.post('/api/login').send({ username: 'fonzeus', password: 'chiklet' })
+
+  const blog = {
+    title: "How to learn fullstack development",
+    author: "Alphonzo Escolar",
+    url: "https://computernerds.com/",
+    likes: 101,
+  }
+
+  await api
+    .post('/api/blogs')
+    .set('Authorization', `Bearer ${loginResponse.body.token}`)
+    .send(blog)
+    .expect(201)
+    .expect('Content-Type', /application\/json/)
+
+  const blogsAtEnd = await api.get('/api/blogs')
+  assert.strictEqual(blogsAtEnd.body.length, helper.initialBlogs.length + 1)
+
+  const titles = blogsAtEnd.body.map(({ title }) => title)
+  assert(titles.includes('How to learn fullstack development'))
+})
+
+test('creation fails and returns 401 status code if token was not provided', async () => {
   const blog = {
     title: "How to learn fullstack development",
     author: "Alphonzo Escolar",
@@ -44,14 +72,11 @@ test('successfully creates a valid blog', async () => {
   await api
     .post('/api/blogs')
     .send(blog)
-    .expect(201)
+    .expect(401)
     .expect('Content-Type', /application\/json/)
 
-  let response = await api.get('/api/blogs')
-  assert.strictEqual(response.body.length, helper.initialBlogs.length + 1)
-
-  const titles = response.body.map(({ title }) => title)
-  assert(titles.includes('How to learn fullstack development'))
+  let blogsAtEnd = await api.get('/api/blogs')
+  assert.strictEqual(blogsAtEnd.body.length, helper.initialBlogs.length)
 })
 
 test('if likes property is missing, likes\' value default to zero', async () => {
@@ -160,7 +185,7 @@ describe('when there is initially one user in db', () => {
     assert.strictEqual(usersAtStart.length, usersAtEnd.length)
   })
 
-  test.only('creation fails with proper status code and error message if the name is invalid', async () => {
+  test('creation fails with proper status code and error message if the name is invalid', async () => {
     const usersAtStart = await User.find({})
 
     const userWithInvalidName = {

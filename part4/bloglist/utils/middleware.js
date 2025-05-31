@@ -22,7 +22,13 @@ const tokenExtractor = (request, response, next) => {
 }
 
 const userExtractor = async (request, response, next) => {
-  const decodedToken = jwt.verify(request.token, config.SECRET)
+  const token = request.token
+
+  if (!token) {
+    return response.status(401).json({ error: 'unauthorized request' })
+  }
+
+  const decodedToken = jwt.verify(token, config.SECRET)
   if (!decodedToken) {
     return response.status(400).json({ error: 'invalid token' })
   }
