@@ -1,5 +1,6 @@
 import { useState, useEffect } from 'react'
 import Blog from './components/Blog'
+import Notification from './components/Notification'
 import blogService from './services/blogs'
 import loginService from './services/login'
 
@@ -11,6 +12,8 @@ const App = () => {
   const [title, setTitle] = useState('')
   const [author, setAuthor] = useState('')
   const [url, setUrl] = useState('')
+  const [error, setError] = useState(false)
+  const [notificationMsg, setNotificationMsg] = useState(null)
 
   useEffect(() => {
     blogService.getAll().then(blogs =>
@@ -25,6 +28,11 @@ const App = () => {
     }
   }, [])
 
+  const resetLoginForm = () => {
+    setUsername('')
+    setPassword('')
+  }
+
   const handleLogin = async (event) => {
     event.preventDefault()
 
@@ -32,12 +40,13 @@ const App = () => {
       const user = await loginService.login({ username, password })
       window.localStorage.setItem('loggedBlogsAppUser', JSON.stringify(user))
       setUser(user)
-      setUsername('')
-      setPassword('')
+      resetLoginForm()
     } catch (exception) {
-      setUsername('')
-      setPassword('')
-      console.error({ error: exception })
+      setNotificationMsg('wrong username or password')
+      setTimeout(() => {
+        setNotificationMsg(null)
+      }, 3000)
+      resetLoginForm()
     }
   }
 
@@ -61,8 +70,19 @@ const App = () => {
       blogService.setToken(user.token)
       const returnedBlog = await blogService.create(newBlog)
       setBlogs([...blogs, returnedBlog])
+      setNotificationMsg(`a new blog ${returnedBlog.title} by ${returnedBlog.author} added`)
+      setTimeout(() => {
+        setNotificationMsg(null)
+      }, 3000)
       resetBlogsForm()
     } catch (exception) {
+      setNotificationMsg('Error adding a blog')
+      setError(true)
+      setTimeout(() => {
+        setNotificationMsg(null)
+        setError(false)
+      }, 3000)
+
       resetBlogsForm()
       console.error({ error: exception })
     }
@@ -72,7 +92,7 @@ const App = () => {
     return (
       <>
         <h2>log in to application</h2>
-
+        <Notification message={notificationMsg} error={true} />
         <form onSubmit={handleLogin}>
           <div>
             username
@@ -99,6 +119,9 @@ const App = () => {
   return (
     <>
       <h2>blogs</h2>
+
+      <Notification message={notificationMsg} error={error} />
+
       <div style={{ display: 'flex', gap: '5px', alignItems: 'center' }}>
         <p>{user.name} logged in</p>
         <button onClick={handleLogout}>logout</button>
