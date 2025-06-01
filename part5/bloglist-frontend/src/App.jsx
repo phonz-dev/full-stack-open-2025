@@ -76,6 +76,9 @@ const App = () => {
     )
   }
 
+  console.log(blogs[0])
+
+
   return (
     <>
       <h2>blogs</h2>
