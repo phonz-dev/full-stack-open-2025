@@ -14,9 +14,10 @@ const App = () => {
   const [notificationMsg, setNotificationMsg] = useState(null)
   const blogFormRef = useRef()
 
+
   useEffect(() => {
     blogService.getAll().then(blogs =>
-      setBlogs( blogs )
+      setBlogs( blogs.sort((b1, b2) => b2.likes - b1.likes) )
     )
   }, [])
 
@@ -74,7 +75,10 @@ const App = () => {
         likes: blog.likes + 1
       }
       await blogService.update(id, updatedBlog)
-      setBlogs(blogs.map(blog => blog.id === updatedBlog.id ? updatedBlog : blog))
+      const sortedBlogs = blogs
+        .map(blog => blog.id === updatedBlog.id ? updatedBlog : blog)
+        .sort((b1, b2) => b2.likes - b1.likes)
+      setBlogs(sortedBlogs)
     } catch (error) {
       console.error(error)
     }
@@ -89,9 +93,6 @@ const App = () => {
       </>
     )
   }
-
-  console.log(blogs[0])
-
 
   return (
     <>

@@ -10,6 +10,8 @@ const Blog = ({ blog, onLikeButtonClick }) => {
     padding: 5
   }
 
+  const user = JSON.parse(window.localStorage.getItem('loggedBlogsAppUser'))
+
   return (
     <>
       <div style={blogStyle}>
@@ -25,7 +27,7 @@ const Blog = ({ blog, onLikeButtonClick }) => {
             likes {blog.likes}
             <button style={{ marginLeft: '5px' }} onClick={onLikeButtonClick} >like</button>
           </div>
-          <div>{blog.author}</div>
+          <div>{user.name}</div>
         </div>
       </div>
     </>
