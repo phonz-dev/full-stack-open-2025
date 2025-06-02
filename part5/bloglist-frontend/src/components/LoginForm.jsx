@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useState } from 'react'
 
 const LoginForm = ({ loginUser }) => {
   const [username, setUsername] = useState('')
@@ -18,7 +18,7 @@ const LoginForm = ({ loginUser }) => {
         <input
           type="text"
           value={username}
-          onChange={({target}) => setUsername(target.value)}
+          onChange={({ target }) => setUsername(target.value)}
         />
       </div>
       <div>
@@ -26,7 +26,7 @@ const LoginForm = ({ loginUser }) => {
         <input
           type="text"
           value={password}
-          onChange={({target}) => setPassword(target.value)}
+          onChange={({ target }) => setPassword(target.value)}
         />
       </div>
       <button type="submit">login</button>
