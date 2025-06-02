@@ -7,6 +7,7 @@ import BlogForm from './components/BlogForm'
 import LoginForm from './components/LoginForm'
 import Togglable from './components/Togglable'
 
+
 const App = () => {
   const [blogs, setBlogs] = useState([])
   const [user, setUser] = useState(null)
@@ -67,18 +68,32 @@ const App = () => {
     }
   }
 
-  const incrementLikes = async id => {
+  const incrementLikesOf = async id => {
     try {
       const blog = blogs.find(blog => blog.id === id)
       const updatedBlog = {
         ...blog,
         likes: blog.likes + 1
       }
-      await blogService.update(id, updatedBlog)
+      const returnedBlog = await blogService.update(id, updatedBlog)
       const sortedBlogs = blogs
-        .map(blog => blog.id === updatedBlog.id ? updatedBlog : blog)
+        .map(blog => blog.id === returnedBlog.id ? returnedBlog : blog)
         .sort((b1, b2) => b2.likes - b1.likes)
       setBlogs(sortedBlogs)
+    } catch (error) {
+      console.error(error)
+    }
+  }
+
+  const removeBlogOf = async id => {
+    try {
+      const blog = blogs.find(blog => blog.id === id)
+      const removeConfirmed = window.confirm(`Remove blog ${blog.title} by ${blog.author}?`)
+      if (removeConfirmed) {
+        blogService.setToken(user.token)
+        await blogService.remove(blog.id)
+        setBlogs(blogs.filter(blog => blog.id !== id))
+      }
     } catch (error) {
       console.error(error)
     }
@@ -110,7 +125,12 @@ const App = () => {
       </Togglable>
 
       {blogs.map(blog =>
-        <Blog key={blog.id} blog={blog} onLikeButtonClick={() => incrementLikes(blog.id)} />
+        <Blog
+          key={blog.id}
+          blog={blog}
+          onLikeButtonClick={() => incrementLikesOf(blog.id)}
+          onRemoveClick={() => removeBlogOf(blog.id)}
+        />
       )}
     </>
   )

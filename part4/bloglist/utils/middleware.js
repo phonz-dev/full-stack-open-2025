@@ -17,13 +17,11 @@ const tokenExtractor = (request, response, next) => {
   if (authorization && authorization.startsWith('Bearer ')) {
     request.token = authorization.replace('Bearer ', '')
   }
-
   next()
 }
 
 const userExtractor = async (request, response, next) => {
   const token = request.token
-
   if (!token) {
     return response.status(401).json({ error: 'unauthorized request' })
   }
