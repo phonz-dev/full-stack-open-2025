@@ -10,7 +10,11 @@ const Blog = ({ blog, onLikeButtonClick, onRemoveClick }) => {
     padding: 5
   }
 
-  const loggedInUser = JSON.parse(window.localStorage.getItem('loggedBlogsAppUser'))
+  let loggedInUser = JSON.parse(window.localStorage.getItem('loggedBlogsAppUser'))
+
+  if (!loggedInUser) {
+    loggedInUser = { name: blog.user.name }
+  }
 
   return (
     <>
@@ -21,7 +25,7 @@ const Blog = ({ blog, onLikeButtonClick, onRemoveClick }) => {
           </div>
           <button onClick={() => setShow(!show)}>{ show ? 'hide': 'view' }</button>
         </div>
-        <div style={{ display: show ? '' : 'none'  }}>
+        <div style={{ display: show ? '' : 'none'  }} className='blog-dropdown'>
           <div>{blog.url}</div>
           <div>
             likes {blog.likes}
