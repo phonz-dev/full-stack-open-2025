@@ -45,5 +45,15 @@ describe('<Blog />', () => {
     expect(likes).toBeDefined()
   })
 
+  test('when like button is clicked twice, the bound event handler is called twice', async () => {
+    const likeBlog = vi.fn()
+    render(<Blog blog={blog} onLikeButtonClick={likeBlog} />)
 
+    const likeBtn = screen.getByText('like')
+    const user = userEvent.setup()
+    await user.click(likeBtn)
+    await user.click(likeBtn)
+
+    expect(likeBlog.mock.calls).toHaveLength(2)
+  })
 })
