@@ -1,11 +1,13 @@
 import { render, screen } from '@testing-library/react'
-import { test, describe, expect, vi } from 'vitest'
+import { test, describe, expect, vi, beforeEach } from 'vitest'
 import userEvent from '@testing-library/user-event'
 import Blog from './Blog'
 
 describe('<Blog />', () => {
-  test('renders blog\'s title and author but not url and likes initially', async () => {
-    const blog = {
+  let blog
+
+  beforeEach(() => {
+    blog = {
       title: 'Example Blog',
       author: 'Anonymous',
       url: 'example.com',
@@ -14,7 +16,9 @@ describe('<Blog />', () => {
         name: 'Anonymous Again'
       }
     }
+  })
 
+  test('renders blog\'s title and author but not url and likes initially', async () => {
     const { container } = render(<Blog blog={blog} />)
 
     const element = screen.getByText(`${blog.title} ${blog.author}`)
@@ -23,4 +27,23 @@ describe('<Blog />', () => {
     const dropdown = container.querySelector('.blog-dropdown')
     expect(dropdown).toHaveStyle('display: none')
   })
+
+  test('additional details are shown when the view button is clicked', async () => {
+    const { container } = render(<Blog blog={blog} />)
+
+    const button = screen.getByText('view')
+    const user = userEvent.setup()
+    await user.click(button)
+
+    const dropdown = container.querySelector('.blog-dropdown')
+    expect(dropdown).not.toHaveStyle('display: none')
+
+    const url = screen.getByText(blog.url)
+    expect(url).toBeDefined()
+
+    const likes = screen.getByText(blog.likes, { exact: false })
+    expect(likes).toBeDefined()
+  })
+
+
 })
