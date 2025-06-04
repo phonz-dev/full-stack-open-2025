@@ -11,6 +11,13 @@ describe('Blog app', () => {
         password: 'fonzeus'
       }
     })
+    await request.post('http://localhost:3003/api/users', {
+      data: {
+        name: 'Matti Luukkainen',
+        username: 'mluukkai',
+        password: 'salainen'
+      }
+    })
 
     await page.goto('http://localhost:5173')
   })
@@ -70,6 +77,15 @@ describe('Blog app', () => {
         await page.getByRole('button', { name: 'remove' }).click()
         await expect(page.getByText('removed First blog')).toBeVisible()
         await expect(page.getByText('First blog First author')).not.toBeVisible()
+      })
+
+      test('only the user who\'s logged in can see the remove button', async ({ page }) => {
+        await expect(page.getByText('remove')).toBeVisible()
+        await page.getByRole('button', { name: 'logout' }).click()
+        await loginUser(page, 'mluukkai', 'salainen')
+        const user = await page.getByText('Matti Luukkainen logged in')
+        await expect(user).toBeVisible()
+        await expect(page.getByText('remove')).not.toBeVisible()
       })
     })
   })
