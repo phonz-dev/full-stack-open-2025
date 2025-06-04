@@ -33,6 +33,7 @@ const App = () => {
     try {
       const user = await loginService.login(userInfo)
       window.localStorage.setItem('loggedBlogsAppUser', JSON.stringify(user))
+      blogService.setToken(user.token)
       setUser(user)
     } catch (exception) {
       setNotificationMsg('wrong username or password')
@@ -50,7 +51,6 @@ const App = () => {
   const addBlog = async (newBlog) => {
     try {
       blogFormRef.current.toggleVisibility()
-      blogService.setToken(user.token)
       const returnedBlog = await blogService.create(newBlog)
       setBlogs([...blogs, returnedBlog])
       setNotificationMsg(`a new blog ${returnedBlog.title} by ${returnedBlog.author} added`)
@@ -90,7 +90,6 @@ const App = () => {
       const blog = blogs.find(blog => blog.id === id)
       const removeConfirmed = window.confirm(`Remove blog ${blog.title} by ${blog.author}?`)
       if (removeConfirmed) {
-        blogService.setToken(user.token)
         await blogService.remove(blog.id)
         setBlogs(blogs.filter(blog => blog.id !== id))
       }
