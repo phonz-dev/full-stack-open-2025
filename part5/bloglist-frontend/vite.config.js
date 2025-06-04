@@ -12,6 +12,9 @@ export default defineConfig({
       },
     },
   },
+  use: {
+    baseUrl: "http://localhost:5173"
+  },
   test: {
     environment: 'jsdom',
     globals: true,
