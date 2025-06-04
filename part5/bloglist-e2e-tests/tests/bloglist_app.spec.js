@@ -1,4 +1,5 @@
 const { test, expect, beforeEach, describe } = require('@playwright/test')
+const { loginUser, createBlog } = require('./helper')
 
 describe('Blog app', () => {
   beforeEach(async ({ page, request }) => {
@@ -24,40 +25,52 @@ describe('Blog app', () => {
 
   describe('Login', () => {
     test('succeeds with correct credentials', async ({ page }) => {
-      await page.getByTestId('username').fill('fonzdev')
-      await page.getByTestId('password').fill('fonzeus')
-      await page.getByRole('button', { name: 'login' }).click()
-
+      await loginUser(page, 'fonzdev', 'fonzeus')
       const user = await page.getByText('Alphonzo Escolar logged in')
       await expect(user).toBeVisible()
     })
 
     test('fails with wrong credentials', async ({ page }) => {
-      await page.getByTestId('username').fill('fonzdev')
-      await page.getByTestId('password').fill('wrong')
-      await page.getByRole('button', { name: 'login' }).click()
-
+      await loginUser(page, 'fonzdev', 'wrong')
       await expect(page.getByText('wrong username or password')).toBeVisible()
     })
   })
 
   describe('When logged in', () => {
     beforeEach(async ({ page }) => {
-      await page.getByTestId('username').fill('fonzdev')
-      await page.getByTestId('password').fill('fonzeus')
-      await page.getByRole('button', { name: 'login' }).click()
+      await loginUser(page, 'fonzdev', 'fonzeus')
     })
 
-    test.only('a new blog can be created', async ({ page }) => {
-      await page.pause()
-      await page.getByRole('button', { name: 'new blog' }).click()
-      await page.getByTestId('title').fill('Example blog')
-      await page.getByTestId('author').fill('Robert Martin')
-      await page.getByTestId('url').fill('example.com')
-
-      await page.getByRole('button', { name: 'create' }).click()
+    test('a new blog can be created', async ({ page }) => {
+      await createBlog(page, 'Example blog', 'Robert Martin', 'example.com')
       await expect(page.getByText('a new blog Example blog by Robert Martin added')).toBeVisible()
       await expect(page.getByText('Example blog Robert Martin')).toBeVisible()
+    })
+
+    describe('when blog is added', () => {
+      beforeEach(async ({ page }) => {
+        createBlog(page, 'First blog', 'First author', 'first.com')
+
+        await page
+          .getByText('First blog First author')
+          .locator('..')
+          .getByRole('button', { name: 'view' })
+          .click()
+      })
+
+      test('it can be liked', async ({ page }) => {
+        const dropdown = await page.locator('.blog-dropdown')
+        await dropdown.getByRole('button', { name: 'like' }).click()
+        await expect(dropdown.getByText('likes 1')).toBeVisible()
+      })
+
+      test('it can be deleted', async ({ page }) => {
+        await page.on('dialog', dialog => dialog.accept())
+        await expect(page.getByText('First blog First author')).toBeVisible()
+        await page.getByRole('button', { name: 'remove' }).click()
+        await expect(page.getByText('removed First blog')).toBeVisible()
+        await expect(page.getByText('First blog First author')).not.toBeVisible()
+      })
     })
   })
 })

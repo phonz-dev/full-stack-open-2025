@@ -91,6 +91,12 @@ const App = () => {
       const removeConfirmed = window.confirm(`Remove blog ${blog.title} by ${blog.author}?`)
       if (removeConfirmed) {
         await blogService.remove(blog.id)
+        setNotificationMsg(`removed ${blog.title}`)
+        setError(true)
+        setTimeout(() => {
+          setNotificationMsg(null)
+          setError(false)
+        }, 5000)
         setBlogs(blogs.filter(blog => blog.id !== id))
       }
     } catch (error) {
