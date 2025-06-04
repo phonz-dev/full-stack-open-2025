@@ -16,6 +16,7 @@ const LoginForm = ({ loginUser }) => {
       <div>
         username
         <input
+          data-testid="username"
           type="text"
           value={username}
           onChange={({ target }) => setUsername(target.value)}
@@ -24,6 +25,7 @@ const LoginForm = ({ loginUser }) => {
       <div>
         password
         <input
+          data-testid="password"
           type="text"
           value={password}
           onChange={({ target }) => setPassword(target.value)}
