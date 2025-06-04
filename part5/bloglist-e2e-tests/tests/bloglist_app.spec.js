@@ -54,38 +54,51 @@ describe('Blog app', () => {
       await expect(page.getByText('Example blog Robert Martin')).toBeVisible()
     })
 
-    describe('when blog is added', () => {
+    describe('when blogs are added', () => {
+      let dropdowns
+      let items
       beforeEach(async ({ page }) => {
-        createBlog(page, 'First blog', 'First author', 'first.com')
+        await createBlog(page, 'First blog', 'First author', 'first.com')
+        await createBlog(page, 'Second blog', 'Second author', 'second.com')
+        await createBlog(page, 'Third blog', 'Third author', 'third.com')
 
-        await page
-          .getByText('First blog First author')
-          .locator('..')
-          .getByRole('button', { name: 'view' })
-          .click()
+        dropdowns = await page.locator('.blog-dropdown').all()
+        items = await page.locator('.blog-item').all()
+        for (const item of items) {
+          await item.getByRole('button', { name: 'view' }).click()
+        }
       })
 
       test('it can be liked', async ({ page }) => {
-        const dropdown = await page.locator('.blog-dropdown')
-        await dropdown.getByRole('button', { name: 'like' }).click()
-        await expect(dropdown.getByText('likes 1')).toBeVisible()
+        for (const dropdown of dropdowns) {
+          await dropdown.getByRole('button', { name: 'like' }).click()
+          await expect(dropdown.getByText('likes 1')).toBeVisible()
+        }
       })
 
       test('it can be deleted', async ({ page }) => {
         await page.on('dialog', dialog => dialog.accept())
-        await expect(page.getByText('First blog First author')).toBeVisible()
-        await page.getByRole('button', { name: 'remove' }).click()
+        await expect(items[0].getByText('First blog First author')).toBeVisible()
+        await items[0].getByRole('button', { name: 'remove' }).click()
         await expect(page.getByText('removed First blog')).toBeVisible()
         await expect(page.getByText('First blog First author')).not.toBeVisible()
       })
 
       test('only the user who\'s logged in can see the remove button', async ({ page }) => {
-        await expect(page.getByText('remove')).toBeVisible()
+        await expect(items[0].getByText('remove')).toBeVisible()
         await page.getByRole('button', { name: 'logout' }).click()
         await loginUser(page, 'mluukkai', 'salainen')
         const user = await page.getByText('Matti Luukkainen logged in')
         await expect(user).toBeVisible()
-        await expect(page.getByText('remove')).not.toBeVisible()
+        await expect(items[0].getByText('remove')).not.toBeVisible()
+      })
+
+      test('blogs are arranged in descending order according to the number of likes', async ({ page }) => {
+        await items[0].locator('.blog-dropdown').getByRole('button', { name: 'like' }).click()
+        await expect(items[0].getByText('First blog First Author')).toBeVisible()
+        await items[1].locator('.blog-dropdown').getByRole('button', { name: 'like' }).click()
+        await items[1].locator('.blog-dropdown').getByRole('button', { name: 'like' }).click()
+        await expect(items[0].getByText('Second blog Second Author')).toBeVisible()
       })
     })
   })

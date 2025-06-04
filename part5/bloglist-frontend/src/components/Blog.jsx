@@ -18,7 +18,7 @@ const Blog = ({ blog, onLikeButtonClick, onRemoveClick }) => {
 
   return (
     <>
-      <div style={blogStyle}>
+      <div style={blogStyle} className='blog-item'>
         <div style={{ display: 'flex', gap: '5px', alignItems: 'center' }}>
           <div>
             {blog.title} {blog.author}
@@ -28,7 +28,7 @@ const Blog = ({ blog, onLikeButtonClick, onRemoveClick }) => {
         <div style={{ display: show ? '' : 'none'  }} className='blog-dropdown'>
           <div>{blog.url}</div>
           <div>
-            likes {blog.likes}
+            likes <span className='likes-count'>{blog.likes}</span>
             <button style={{ marginLeft: '5px' }} onClick={onLikeButtonClick} >like</button>
           </div>
           <div>{blog.user.name}</div>
