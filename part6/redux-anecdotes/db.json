@@ -8,7 +8,7 @@
     {
       "content": "Adding manpower to a late software project makes it later!",
       "id": "21149",
-      "votes": 5
+      "votes": 6
     },
     {
       "content": "The first 90 percent of the code accounts for the first 10 percent of the development time...The remaining 10 percent of the code accounts for the other 90 percent of the development time.",
@@ -43,6 +43,16 @@
     {
       "id": "9245",
       "content": "Blazor is awesome",
+      "votes": 0
+    },
+    {
+      "id": "503f",
+      "content": "MudBlazor is awesome too!",
+      "votes": 0
+    },
+    {
+      "id": "f4d5",
+      "content": "MUI for react is awesome!",
       "votes": 0
     }
   ]
