@@ -1,20 +1,14 @@
-import { useEffect } from 'react'
 import AnecdoteForm from './components/AnecdoteForm'
 import AnecdoteList from './components/AnecdoteList'
 import Filter from './components/Filter'
-import { useDispatch } from 'react-redux'
-import { orderAnecdotes } from './reducers/anecdoteReducer'
+import Notification from './components/Notification'
 
 const App = () => {
-  const dispatch = useDispatch
-
-  useEffect(() => {
-    dispatch(orderAnecdotes())
-  }, [dispatch])
 
   return (
     <div>
       <h2>Anecdotes</h2>
+      <Notification />
       <Filter />
       <AnecdoteList />
       <AnecdoteForm />
