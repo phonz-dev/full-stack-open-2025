@@ -34,6 +34,16 @@
       "id": "98fc",
       "content": "Redux is awesome",
       "votes": 0
+    },
+    {
+      "id": "a9ff",
+      "content": "Flux is awesome",
+      "votes": 0
+    },
+    {
+      "id": "9245",
+      "content": "Blazor is awesome",
+      "votes": 0
     }
   ]
 }
