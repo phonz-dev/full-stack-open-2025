@@ -3,7 +3,7 @@ import { useState } from 'react'
 export const useField = name => {
   const [value, setValue] = useState('')
 
-  const onChange = event => {
+  const onChange = (event) => {
     setValue(event.target.value)
   }
 
@@ -12,9 +12,11 @@ export const useField = name => {
   }
 
   return {
-    name,
-    value,
-    onChange,
+    fieldProps: {
+      name,
+      value,
+      onChange,
+    },
     reset
   }
 }

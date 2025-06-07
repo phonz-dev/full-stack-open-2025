@@ -11,16 +11,16 @@ const CreateNew = ({ addNew }) => {
   const handleSubmit = (e) => {
     e.preventDefault()
     const anecdote = {
-      content: content.value,
-      author: author.value,
-      info: info.value,
+      content: content.fieldProps.value,
+      author: author.fieldProps.value,
+      info: info.fieldProps.value,
       votes: 0
     }
     addNew(anecdote)
     navigate('/')
   }
 
-  const resetField = () => {
+  const resetFields = () => {
     content.reset()
     author.reset()
     info.reset()
@@ -32,30 +32,18 @@ const CreateNew = ({ addNew }) => {
       <form onSubmit={handleSubmit}>
         <div>
           content
-          <input
-            name={content.name}
-            value={content.value}
-            onChange={content.onChange}
-          />
+          <input {...content.fieldProps} />
         </div>
         <div>
           author
-          <input
-            name={author.name}
-            value={author.value}
-            onChange={author.onChange}
-          />
+          <input {...author.fieldProps} />
         </div>
         <div>
           url for more info
-          <input
-            name={info.name}
-            value={info.value}
-            onChange={info.onChange}
-          />
+          <input {...info.fieldProps} />
         </div>
         <button type='submit'>create</button>
-        <button type='button' onClick={resetField}>reset</button>
+        <button type='button' onClick={resetFields}>reset</button>
       </form>
     </div>
   )
