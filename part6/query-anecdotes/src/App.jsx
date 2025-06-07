@@ -12,10 +12,11 @@ const App = () => {
   const result = useQuery({
     queryKey: ['anecdotes'],
     queryFn: getAnecdotes,
+    refetchOnWindowFocus: false,
     retry: false
   })
 
-  console.log(JSON.parse(JSON.stringify(result)))
+  // console.log(JSON.parse(JSON.stringify(result)))
 
   if (result.isLoading) {
     return <div>loading data...</div>
