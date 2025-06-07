@@ -11,6 +11,12 @@ const AnecdoteForm = () => {
     onSuccess: newAnecdote => {
       const anecdotes = queryClient.getQueryData(['anecdotes'])
       queryClient.setQueryData(['anecdotes'], [...anecdotes, newAnecdote])
+    },
+    onError: (error) => {
+      notifDispatch({ type: 'SET_NOTIF', payload: error.response.data.error })
+      setTimeout(() => {
+        notifDispatch({ type: 'REMOVE' })
+      }, 5000)
     }
   })
 
