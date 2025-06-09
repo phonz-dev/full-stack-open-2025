@@ -13,8 +13,8 @@ describe('<Blog />', () => {
       url: 'example.com',
       likes: 1400,
       user: {
-        name: 'Anonymous Again'
-      }
+        name: 'Anonymous Again',
+      },
     }
   })
 
