@@ -6,13 +6,16 @@ import loginService from './services/login'
 import BlogForm from './components/BlogForm'
 import LoginForm from './components/LoginForm'
 import Togglable from './components/Togglable'
+import { useDispatch, useSelector } from 'react-redux'
+import { notify } from './reducers/notificationReducer'
 
 const App = () => {
   const [blogs, setBlogs] = useState([])
   const [user, setUser] = useState(null)
   const [error, setError] = useState(false)
-  const [notificationMsg, setNotificationMsg] = useState(null)
   const blogFormRef = useRef()
+  const notifMsg = useSelector(({ notification }) => notification)
+  const dispatch = useDispatch()
 
   useEffect(() => {
     blogService
@@ -23,7 +26,9 @@ const App = () => {
   useEffect(() => {
     const loggedUserJSON = window.localStorage.getItem('loggedBlogsAppUser')
     if (loggedUserJSON) {
-      setUser(JSON.parse(loggedUserJSON))
+      const user = JSON.parse(loggedUserJSON)
+      blogService.setToken(user.token)
+      setUser(user)
     }
   }, [])
 
@@ -34,10 +39,9 @@ const App = () => {
       blogService.setToken(user.token)
       setUser(user)
     } catch (exception) {
-      setNotificationMsg('wrong username or password')
-      setTimeout(() => {
-        setNotificationMsg(null)
-      }, 3000)
+      setError(true)
+      setTimeout(() => setError(false), 5000)
+      dispatch(notify('wrong username or password', 5))
     }
   }
 
@@ -51,20 +55,12 @@ const App = () => {
       blogFormRef.current.toggleVisibility()
       const returnedBlog = await blogService.create(newBlog)
       setBlogs([...blogs, returnedBlog])
-      setNotificationMsg(
-        `a new blog ${returnedBlog.title} by ${returnedBlog.author} added`
-      )
-      setTimeout(() => {
-        setNotificationMsg(null)
-      }, 3000)
+      dispatch(notify(`a new blog ${returnedBlog.title} by ${returnedBlog.author} added`, 5))
     } catch (exception) {
       console.error(exception)
-      setNotificationMsg('Error adding a blog')
+      dispatch(notify('Error adding a blog', 5))
       setError(true)
-      setTimeout(() => {
-        setNotificationMsg(null)
-        setError(false)
-      }, 3000)
+      setTimeout(() => setError(false), 5000)
     }
   }
 
@@ -88,17 +84,13 @@ const App = () => {
   const removeBlogOf = async (id) => {
     try {
       const blog = blogs.find((blog) => blog.id === id)
-      const removeConfirmed = window.confirm(
-        `Remove blog ${blog.title} by ${blog.author}?`
-      )
+      const removeConfirmed = window
+        .confirm(`Remove blog ${blog.title} by ${blog.author}?`)
       if (removeConfirmed) {
         await blogService.remove(blog.id)
-        setNotificationMsg(`removed ${blog.title}`)
         setError(true)
-        setTimeout(() => {
-          setNotificationMsg(null)
-          setError(false)
-        }, 5000)
+        setTimeout(() => setError(false), 5000)
+        dispatch(notify(`removed ${blog.title}`, 5))
         setBlogs(blogs.filter((blog) => blog.id !== id))
       }
     } catch (error) {
@@ -111,7 +103,7 @@ const App = () => {
       <>
         <h2>log in to application</h2>
         <Notification
-          message={notificationMsg}
+          message={notifMsg}
           error={true}
         />
         <LoginForm loginUser={handleLogin} />
@@ -124,7 +116,7 @@ const App = () => {
       <h2>blogs</h2>
 
       <Notification
-        message={notificationMsg}
+        message={notifMsg}
         error={error}
       />
 
