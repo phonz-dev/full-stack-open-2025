@@ -1,7 +1,37 @@
 import { useState } from 'react'
+import { useNotificationDispatch } from './NotificationContext'
+import { useQueryClient, useMutation } from '@tanstack/react-query'
+import blogService from '../services/blogs'
 
-const Blog = ({ blog, onLikeButtonClick, onRemoveClick }) => {
+
+const Blog = ({ blog }) => {
   const [show, setShow] = useState(false)
+  const notifDispatch = useNotificationDispatch()
+  const queryClient = useQueryClient()
+
+  const removeBlogMutation = useMutation({
+    mutationKey: ['blogs'],
+    mutationFn: blogService.remove,
+    onSuccess: () => {
+      const blogs = queryClient.getQueryData(['blogs'])
+      queryClient.setQueryData(
+        ['blogs'],
+        blogs.filter(b => b.id !== blog.id)
+      )
+    }
+  })
+
+  const incrementLikesMutation = useMutation({
+    mutationKey: ['blogs'],
+    mutationFn: ({ id, updatedBlog }) => blogService.update(id, updatedBlog),
+    onSuccess: (updatedBlog) => {
+      const blogs = queryClient.getQueryData(['blogs'])
+      queryClient.setQueryData(
+        ['blogs'],
+        blogs.map(b => b.id === updatedBlog.id ? updatedBlog : b)
+      )
+    }
+  })
 
   const blogStyle = {
     border: '1px solid black',
@@ -16,6 +46,52 @@ const Blog = ({ blog, onLikeButtonClick, onRemoveClick }) => {
 
   if (!loggedInUser) {
     loggedInUser = { name: blog.user.name }
+  }
+
+  const removeBlog = async () => {
+    try {
+      const removeConfirmed = window.confirm(`Remove blog ${blog.title} by ${blog.author}?`)
+
+      if (removeConfirmed) {
+        await removeBlogMutation.mutateAsync(blog.id)
+        notifDispatch({
+          type: 'SET_NOTIF',
+          payload: {
+            message: `removed ${blog.title}`,
+            seconds: 5
+          }
+        })
+      }
+    } catch (error) {
+      notifDispatch({
+        type: 'SET_NOTIF',
+        payload: {
+          message: 'error deleting blog',
+          isError: true,
+          seconds: 5
+        }
+      })
+    }
+  }
+
+  const incrementLikes = async () => {
+    try {
+      const updatedBlog = {
+        ...blog,
+        likes: blog.likes + 1
+      }
+
+      await incrementLikesMutation.mutateAsync({ id: blog.id, updatedBlog })
+    } catch (error) {
+      notifDispatch({
+        type: 'SET_NOTIF',
+        payload: {
+          message: 'error liking blog',
+          isError: true,
+          seconds: 5
+        }
+      })
+    }
   }
 
   return (
@@ -33,13 +109,13 @@ const Blog = ({ blog, onLikeButtonClick, onRemoveClick }) => {
           <div>{blog.url}</div>
           <div>
             likes <span className="likes-count">{blog.likes}</span>
-            <button style={{ marginLeft: '5px' }} onClick={onLikeButtonClick}>
+            <button style={{ marginLeft: '5px' }} onClick={incrementLikes}>
               like
             </button>
           </div>
           <div>{blog.user.name}</div>
           {blog.user.name === loggedInUser.name && (
-            <button onClick={onRemoveClick}>remove</button>
+            <button onClick={removeBlog}>remove</button>
           )}
         </div>
       </div>
