@@ -2,6 +2,7 @@ import React, { useState } from 'react'
 import { useNotificationDispatch } from './NotificationContext'
 import { useQueryClient, useMutation } from '@tanstack/react-query'
 import blogService from '../services/blogs'
+import { Link } from 'react-router-dom'
 
 
 const Blog = ({ blog }) => {
@@ -21,17 +22,6 @@ const Blog = ({ blog }) => {
     }
   })
 
-  const incrementLikesMutation = useMutation({
-    mutationKey: ['blogs'],
-    mutationFn: ({ id, updatedBlog }) => blogService.update(id, updatedBlog),
-    onSuccess: (updatedBlog) => {
-      const blogs = queryClient.getQueryData(['blogs'])
-      queryClient.setQueryData(
-        ['blogs'],
-        blogs.map(b => b.id === updatedBlog.id ? updatedBlog : b)
-      )
-    }
-  })
 
   const blogStyle = {
     border: '1px solid black',
@@ -74,38 +64,18 @@ const Blog = ({ blog }) => {
     }
   }
 
-  const incrementLikes = async () => {
-    try {
-      const updatedBlog = {
-        ...blog,
-        likes: blog.likes + 1
-      }
-
-      await incrementLikesMutation.mutateAsync({ id: blog.id, updatedBlog })
-    } catch (error) {
-      notifDispatch({
-        type: 'SET_NOTIF',
-        payload: {
-          message: 'error liking blog',
-          isError: true,
-          seconds: 5
-        }
-      })
-    }
-  }
-
   return (
     <>
       <div style={blogStyle} className="blog-item">
         <div style={{ display: 'flex', gap: '5px', alignItems: 'center' }}>
           <div>
-            {blog.title} {blog.author}
+            <Link to={`/blogs/${blog.id}`}>{blog.title} {blog.author}</Link>
           </div>
-          <button onClick={() => setShow(!show)}>
+          {/* <button onClick={() => setShow(!show)}>
             {show ? 'hide' : 'view'}
-          </button>
+          </button> */}
         </div>
-        <div style={{ display: show ? '' : 'none' }} className="blog-dropdown">
+        {/* <div style={{ display: show ? '' : 'none' }} className="blog-dropdown">
           <div>{blog.url}</div>
           <div>
             likes <span className="likes-count">{blog.likes}</span>
@@ -117,7 +87,7 @@ const Blog = ({ blog }) => {
           {blog.user.name === loggedInUser.name && (
             <button onClick={removeBlog}>remove</button>
           )}
-        </div>
+        </div> */}
       </div>
     </>
   )

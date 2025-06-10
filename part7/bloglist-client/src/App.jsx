@@ -9,6 +9,7 @@ import userService from './services/users'
 import Users from './components/Users'
 import User from './components/User'
 import Home from './components/Home'
+import BlogDetails from './components/BlogDetails'
 
 
 const App = () => {
@@ -25,18 +26,23 @@ const App = () => {
   }, [loggedInUserDispatch])
 
   const usersResult = useQuery({ queryKey: ['users'], queryFn: userService.getAll })
-  useQuery({ queryKey: ['blogs'], queryFn: blogService.getAll })
+  const blogsResult = useQuery({ queryKey: ['blogs'], queryFn: blogService.getAll })
 
-  const match = useMatch('/users/:id')
+  const userMatch = useMatch('/users/:id')
+  const blogMatch = useMatch('/blogs/:id')
 
-  if (usersResult.isLoading) {
+  if (usersResult.isLoading && blogsResult.isLoading) {
     return <div>loading data...</div>
   }
 
   const users = usersResult.data
+  const user = userMatch
+    ? users.find(user => user.id === userMatch.params.id)
+    : null
 
-  const user = match
-    ? users.find(user => user.id === match.params.id)
+  const blogs = blogsResult.data
+  const blog = blogMatch
+    ? blogs.find(blog => blog.id === blogMatch.params.id)
     : null
 
   const handleLogout = () => {
@@ -76,6 +82,7 @@ const App = () => {
       <Routes>
         <Route path='/' element={<Home />} />
         <Route path='/users/:id' element={<User user={user} />} />
+        <Route path='/blogs/:id' element={<BlogDetails blog={blog} />} />
         <Route path='/users' element={<Users />} />
       </Routes>
     </>
