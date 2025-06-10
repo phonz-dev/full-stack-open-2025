@@ -1,6 +1,7 @@
 import React from 'react'
 import { useQueryClient } from '@tanstack/react-query'
 import { Link } from 'react-router-dom'
+import { Button } from '@mui/material'
 
 const Users = () => {
   const queryClient = useQueryClient()
@@ -15,14 +16,24 @@ const Users = () => {
         <thead>
           <tr>
             <td></td>
-            <td style={{ fontWeight: 'bold' }}>blogs created</td>
+            <td style={{ fontWeight: 'bold', fontSize: 20 }}>blogs created</td>
           </tr>
         </thead>
         <tbody>
           {users.map(({ name, blogs, id }) =>
             <tr key={id}>
-              <td><Link to={`/users/${id}`}>{name}</Link></td>
-              <td>{blogs.length}</td>
+              <td>
+                <Button
+                  component={Link}
+                  to={`/users/${id}`}
+                  variant='contained'
+                  fullWidth
+                  color='secondary'
+                >
+                  {name}
+                </Button>
+              </td>
+              <td style={{ textAlign: 'right', fontSize: 15, fontWeight: 'bold' }}>{blogs.length}</td>
             </tr>
           )}
         </tbody>

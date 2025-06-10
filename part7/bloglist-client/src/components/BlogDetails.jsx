@@ -90,15 +90,34 @@ const BlogDetails = (({ blog }) => {
       <h2>{blog.title}</h2>
       <div style={{ display: 'flex', flexDirection: 'column', gap: 10 }}>
         <Link to={blog.url} target='_blank'>{blog.url}</Link>
-        <div>{blog.likes} likes <button onClick={incrementLikes}>like</button></div>
+        <div style={{ display: 'flex', gap: 5, alignItems: 'center' }}>
+          <div>
+            {blog.likes} likes
+          </div>
+          <Button
+            size='small'
+            variant='contained'
+            onClick={incrementLikes}
+            color='warning'
+          >
+            like
+          </Button>
+        </div>
         <div>added by {blog.user.name}</div>
       </div>
-      <h3>comments</h3>
-      <form onSubmit={addComment}>
+      <h3>Comments</h3>
+      <form
+        onSubmit={addComment}
+        style={{
+          width: 'fit-content',
+          display: 'flex',
+          flexDirection: 'column',
+          gap: 15
+        }}>
         <div style={{ display: 'flex', alignItems: 'center', gap: 5 }}>
           <TextField value={comment} onChange={(e) => setComment(e.target.value)} variant="outlined" />
-          <Button type='submit' variant='outlined'>add comment</Button>
         </div>
+        <Button type='submit' variant='outlined' fullWidth>add comment</Button>
       </form>
 
       <ul>

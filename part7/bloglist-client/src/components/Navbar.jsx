@@ -15,8 +15,10 @@ const Navbar = () => {
   const containerStyles = {
     display: 'flex',
     alignItems: 'center',
-    gap: 5,
-    padding: 10
+    justifyContent: 'space-between',
+    width: '1200px',
+    margin: 'auto',
+    padding: '20px 0'
   }
 
   const linksContainerStyles = {
@@ -30,25 +32,48 @@ const Navbar = () => {
         <div style={containerStyles}>
           <div style={linksContainerStyles}>
             <div>
-              <Link to='/'>home</Link>
+              <Button
+                component={Link}
+                color='secondary'
+                variant='contained'
+                to='/'
+              >
+                home
+              </Button>
             </div>
             <div>
-              <Link to='/blogs'>blogs</Link>
+              <Button
+                component={Link}
+                color='secondary'
+                variant='contained'
+                to='/blogs'
+              >
+                blogs
+              </Button>
             </div>
             <div>
-              <Link to='/users'>users</Link>
+              <Button
+                component={Link}
+                color='secondary'
+                variant='contained'
+                to='/users'
+              >
+                users
+              </Button>
             </div>
           </div>
-          <div>
-            {loggedInUser.name} logged in
-          </div>
-          <Button
-            color='secondary'
-            sx={{ textTransform: 'lowercase' }}
-            onClick={handleLogout}
-          >
+          <div style={{ display: 'flex', gap: 15, alignItems: 'center' }}>
+            <div style={{ fontSize: 20 }}>
+              {loggedInUser.name} logged in
+            </div>
+            <Button
+              variant='contained'
+              color='secondary'
+              onClick={handleLogout}
+            >
             logout
-          </Button>
+            </Button>
+          </div>
         </div>
       </AppBar>
     </>

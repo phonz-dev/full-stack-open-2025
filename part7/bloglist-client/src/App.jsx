@@ -12,6 +12,7 @@ import Home from './components/Home'
 import BlogDetails from './components/BlogDetails'
 import Navbar from './components/Navbar'
 import Blogs from './components/Blogs'
+import { Container } from '@mui/material'
 
 
 const App = () => {
@@ -51,7 +52,6 @@ const App = () => {
   if (loggedInUser === null) {
     return (
       <>
-        <h2>log in to application</h2>
         <Notification />
         <LoginForm />
       </>
@@ -61,16 +61,18 @@ const App = () => {
 
   return (
     <>
-      <Navbar />
-      <h2 style={{ marginTop: 100 }}>blogs</h2>
-      <Notification />
-      <Routes>
-        <Route path='/' element={<Home />} />
-        <Route path='/users/:id' element={<User user={user} />} />
-        <Route path='/blogs/:id' element={<BlogDetails blog={blog} />} />
-        <Route path='/users' element={<Users />} />
-        <Route path='/blogs' element={<Blogs />} />
-      </Routes>
+      <Container fixed>
+        <Navbar />
+        <h2 style={{ marginTop: 100, width: '100%' }}>Blogs</h2>
+        <Notification />
+        <Routes>
+          <Route path='/' element={<Home />} />
+          <Route path='/users/:id' element={<User user={user} />} />
+          <Route path='/blogs/:id' element={<BlogDetails blog={blog} />} />
+          <Route path='/users' element={<Users />} />
+          <Route path='/blogs' element={<Blogs />} />
+        </Routes>
+      </Container>
     </>
   )
 }

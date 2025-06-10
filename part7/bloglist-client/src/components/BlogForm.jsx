@@ -3,6 +3,7 @@ import { useNotificationDispatch } from './NotificationContext'
 import { useQueryClient, useMutation } from '@tanstack/react-query'
 import blogService from '../services/blogs'
 import Togglable from './Togglable'
+import { Box, Button, TextField } from '@mui/material'
 
 const BlogForm = () => {
   const [title, setTitle] = useState('')
@@ -48,44 +49,67 @@ const BlogForm = () => {
   }
 
   return (
-    <>
+    <div style={{ width: 'fit-content' }}>
       <Togglable buttonLabel='new blog'>
         <h2>create new</h2>
-        <form onSubmit={addBlog}>
-          <div>
-          title:
-            <input
+        <form onSubmit={addBlog} style={{ display: 'flex', flexDirection: 'column', gap: 10 }}>
+          <Box sx={{
+            display: 'flex',
+            justifyContent: 'space-between',
+            alignItems: 'center',
+            gap: 3
+          }}>
+            <div style={{ fontSize: 20 }}>Title:</div>
+            <TextField
               data-testid="title"
               type="text"
               value={title}
               onChange={({ target }) => setTitle(target.value)}
               placeholder="blog title"
             />
-          </div>
-          <div>
-          author:
-            <input
+          </Box>
+          <Box sx={{
+            display: 'flex',
+            justifyContent: 'space-between',
+            alignItems: 'center',
+            gap: 3
+          }}>
+            <div style={{ fontSize: 20 }}>Author:</div>
+            <TextField
               data-testid="author"
               type="text"
               value={author}
               onChange={({ target }) => setAuthor(target.value)}
               placeholder="author of blog"
             />
-          </div>
-          <div>
-          url:
-            <input
+          </Box>
+          <Box sx={{
+            display: 'flex',
+            justifyContent: 'space-between',
+            alignItems: 'center',
+            gap: 3
+          }}>
+            <div style={{ fontSize: 20 }}>URL:</div>
+            <TextField
               data-testid="url"
               type="text"
               value={url}
               onChange={({ target }) => setUrl(target.value)}
               placeholder="blog url"
             />
-          </div>
-          <button type="submit">create</button>
+          </Box>
+          <Button
+            color='warning'
+            variant='contained'
+            type="submit"
+            sx={{ margin: '15px 0' }}
+            fullWidth
+          >
+            create
+          </Button>
         </form>
       </Togglable>
-    </>
+    </div>
   )
 }
 
