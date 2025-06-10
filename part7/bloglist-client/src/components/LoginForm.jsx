@@ -1,6 +1,6 @@
 import { useState } from 'react'
 import { useNotificationDispatch } from './NotificationContext'
-import { useUserDispatch, useUserValue } from './UserContext'
+import { useLoggedInUserDispatch } from './UserContext'
 import { useMutation } from '@tanstack/react-query'
 import loginService from '../services/login'
 import blogService from '../services/blogs'
@@ -9,13 +9,13 @@ const LoginForm = () => {
   const [username, setUsername] = useState('')
   const [password, setPassword] = useState('')
   const notifDispatch = useNotificationDispatch()
-  const userDispatch = useUserDispatch()
+  const loggedInUserDispatch = useLoggedInUserDispatch()
 
   const loginMutation = useMutation({
     mutationKey: ['login'],
     mutationFn: loginService.login,
     onSuccess: (user) => {
-      userDispatch({
+      loggedInUserDispatch({
         type: 'SET_USER',
         payload: user
       })

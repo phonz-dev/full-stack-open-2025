@@ -2,6 +2,7 @@ import { useState } from 'react'
 import { useNotificationDispatch } from './NotificationContext'
 import { useQueryClient, useMutation } from '@tanstack/react-query'
 import blogService from '../services/blogs'
+import Togglable from './Togglable'
 
 const BlogForm = () => {
   const [title, setTitle] = useState('')
@@ -48,40 +49,42 @@ const BlogForm = () => {
 
   return (
     <>
-      <h2>create new</h2>
-      <form onSubmit={addBlog}>
-        <div>
+      <Togglable buttonLabel='new blog'>
+        <h2>create new</h2>
+        <form onSubmit={addBlog}>
+          <div>
           title:
-          <input
-            data-testid="title"
-            type="text"
-            value={title}
-            onChange={({ target }) => setTitle(target.value)}
-            placeholder="blog title"
-          />
-        </div>
-        <div>
+            <input
+              data-testid="title"
+              type="text"
+              value={title}
+              onChange={({ target }) => setTitle(target.value)}
+              placeholder="blog title"
+            />
+          </div>
+          <div>
           author:
-          <input
-            data-testid="author"
-            type="text"
-            value={author}
-            onChange={({ target }) => setAuthor(target.value)}
-            placeholder="author of blog"
-          />
-        </div>
-        <div>
+            <input
+              data-testid="author"
+              type="text"
+              value={author}
+              onChange={({ target }) => setAuthor(target.value)}
+              placeholder="author of blog"
+            />
+          </div>
+          <div>
           url:
-          <input
-            data-testid="url"
-            type="text"
-            value={url}
-            onChange={({ target }) => setUrl(target.value)}
-            placeholder="blog url"
-          />
-        </div>
-        <button type="submit">create</button>
-      </form>
+            <input
+              data-testid="url"
+              type="text"
+              value={url}
+              onChange={({ target }) => setUrl(target.value)}
+              placeholder="blog url"
+            />
+          </div>
+          <button type="submit">create</button>
+        </form>
+      </Togglable>
     </>
   )
 }

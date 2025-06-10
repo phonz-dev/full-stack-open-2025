@@ -23,12 +23,12 @@ export const UserContextProvider = (({ children }) => {
   )
 })
 
-export const useUserValue = () => {
+export const useLoggedInUserValue = () => {
   const userAndDispatch = useContext(UserContext)
   return userAndDispatch[0]
 }
 
-export const useUserDispatch = () => {
+export const useLoggedInUserDispatch = () => {
   const userAndDispatch = useContext(UserContext)
   return userAndDispatch[1]
 }
