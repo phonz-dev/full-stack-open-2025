@@ -39,12 +39,12 @@ const App = () => {
 
   const users = usersResult.data
   const user = userMatch
-    ? users.find(user => user.id === userMatch.params.id)
+    ? users?.find(user => user.id === userMatch.params.id)
     : null
 
   const blogs = blogsResult.data
   const blog = blogMatch
-    ? blogs.find(blog => blog.id === blogMatch.params.id)
+    ? blogs?.find(blog => blog.id === blogMatch.params.id)
     : null
 
 

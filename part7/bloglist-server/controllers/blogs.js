@@ -21,7 +21,8 @@ blogsRouter.post('/', tokenExtractor, userExtractor, async (request, response) =
     author: body.author,
     url: body.url,
     user: user._id,
-    likes: body.likes || 0
+    likes: body.likes || 0,
+    comments: []
   })
 
   const savedBlog = await blog.save()
@@ -29,6 +30,20 @@ blogsRouter.post('/', tokenExtractor, userExtractor, async (request, response) =
   user.blogs = user.blogs.concat(savedBlog)
   await user.save()
   response.status(201).json(populatedBlog)
+})
+
+blogsRouter.post('/:id', async (request, response) => {
+  const { comments } = request.body
+  const blog = await Blog.findById(request.params.id)
+
+  if (!comments) {
+    return response.status(400).json({ error: 'comment field missing' })
+  }
+
+  blog.comments = [...comments]
+
+  const savedBlog = await blog.save()
+  response.json(savedBlog)
 })
 
 blogsRouter.delete('/:id', tokenExtractor, userExtractor, async (request, response) => {
