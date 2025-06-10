@@ -10,6 +10,8 @@ import Users from './components/Users'
 import User from './components/User'
 import Home from './components/Home'
 import BlogDetails from './components/BlogDetails'
+import Navbar from './components/Navbar'
+import Blogs from './components/Blogs'
 
 
 const App = () => {
@@ -45,17 +47,6 @@ const App = () => {
     ? blogs.find(blog => blog.id === blogMatch.params.id)
     : null
 
-  const handleLogout = () => {
-    window.localStorage.removeItem('loggedBlogsAppUser')
-    loggedInUserDispatch({ type: 'REMOVE' })
-  }
-
-  const userStyles = {
-    display: 'flex',
-    flexDirection: 'column',
-    gap: 5,
-    marginBottom: 25
-  }
 
   if (loggedInUser === null) {
     return (
@@ -70,20 +61,15 @@ const App = () => {
 
   return (
     <>
-      <h2>blogs</h2>
+      <Navbar />
+      <h2 style={{ marginTop: 100 }}>blogs</h2>
       <Notification />
-      <div style={userStyles}>
-        <p>{loggedInUser.name} logged in</p>
-        <div>
-          <button onClick={handleLogout}>logout</button>
-        </div>
-      </div>
-
       <Routes>
         <Route path='/' element={<Home />} />
         <Route path='/users/:id' element={<User user={user} />} />
         <Route path='/blogs/:id' element={<BlogDetails blog={blog} />} />
         <Route path='/users' element={<Users />} />
+        <Route path='/blogs' element={<Blogs />} />
       </Routes>
     </>
   )
