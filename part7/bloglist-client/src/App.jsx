@@ -1,34 +1,31 @@
-import { useState, useEffect, useRef } from 'react'
+import { useEffect } from 'react'
 import Blog from './components/Blog'
 import Notification from './components/Notification'
 import blogService from './services/blogs'
 import BlogForm from './components/BlogForm'
 import LoginForm from './components/LoginForm'
 import Togglable from './components/Togglable'
-import { useDispatch, useSelector } from 'react-redux'
-import { initializeBlogs } from './reducers/blogReducer'
-import { setUser } from './reducers/userReducer'
 import { useQuery } from '@tanstack/react-query'
+import { useUserValue, useUserDispatch } from './components/UserContext'
 
 
 
 const App = () => {
-  const dispatch = useDispatch()
-  const user = useSelector(({ user }) => user)
-
+  const user = useUserValue()
+  const userDispatch = useUserDispatch()
 
   useEffect(() => {
     const loggedUserJSON = window.localStorage.getItem('loggedBlogsAppUser')
     if (loggedUserJSON) {
       const user = JSON.parse(loggedUserJSON)
       blogService.setToken(user.token)
-      dispatch(setUser(user))
+      userDispatch({ type: 'SET_USER', payload: user })
     }
   }, [])
 
   const handleLogout = () => {
     window.localStorage.removeItem('loggedBlogsAppUser')
-    dispatch(setUser(null))
+    userDispatch({ type: 'REMOVE' })
   }
 
   const result = useQuery({

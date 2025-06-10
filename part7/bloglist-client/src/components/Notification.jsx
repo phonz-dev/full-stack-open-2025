@@ -1,8 +1,6 @@
-import { useSelector } from 'react-redux'
 import { useNotificationValue, useNotificationDispatch } from './NotificationContext'
 
 const Notification = () => {
-  // const notif = useSelector(({ notification }) => notification)
   const notif = useNotificationValue()
   const notifDispatch = useNotificationDispatch()
 
