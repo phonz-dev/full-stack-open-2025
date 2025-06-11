@@ -128,6 +128,7 @@ const typeDefs = `
       published: Int!
       genres: [String!]
     ): Book!
+
     editAuthor(
       name: String
       setBornTo: Int
